@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eval-fastify-min
+  labels:
+    app: eval-fastify-min
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eval-fastify-min
+  template:
+    metadata:
+      labels:
+        app: eval-fastify-min
+    spec:
+      containers:
+      - name: eval-fastify-min
+        image: eval-fastify-min:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        resources:
+          requests:
+            memory: 256Mi
+            cpu: 250m
+          limits:
+            memory: 512Mi
+            cpu: 500m
+        readinessProbe:
+          httpGet: &id001
+            path: /
+            port: 8000
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 15
+        livenessProbe:
+          httpGet: *id001
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 30

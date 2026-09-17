@@ -3,16 +3,26 @@ kind: Deployment
 metadata:
   name: eval-fastify-min
   labels:
-    app: eval-fastify-min
+    app.kubernetes.io/name: eval-fastify-min
+    app.kubernetes.io/instance: eval-fastify-min
+    app.kubernetes.io/component: server
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: eval-fastify-min
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
   template:
     metadata:
       labels:
         app: eval-fastify-min
+        app.kubernetes.io/name: eval-fastify-min
+        app.kubernetes.io/instance: eval-fastify-min
+        app.kubernetes.io/component: server
     spec:
       containers:
       - name: eval-fastify-min
@@ -22,20 +32,28 @@ spec:
         - containerPort: 8000
         resources:
           requests:
-            memory: 256Mi
             cpu: 250m
+            memory: 256Mi
           limits:
-            memory: 512Mi
             cpu: 500m
+            memory: 512Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          failureThreshold: 3
         readinessProbe:
-          httpGet: &id001
-            path: /
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
             port: 8000
           periodSeconds: 10
-          failureThreshold: 3
-          initialDelaySeconds: 15
-        livenessProbe:
-          httpGet: *id001
-          periodSeconds: 10
-          failureThreshold: 3
-          initialDelaySeconds: 30
+          failureThreshold: 30

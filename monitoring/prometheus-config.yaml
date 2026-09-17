@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: prometheus-config
-  namespace: deploy-proj-f8b83a91ebb7
+  namespace: deploy-proj-94d520c594af
   labels:
     app: prometheus
 data:
@@ -31,7 +31,7 @@ data:
         metrics_path: /metrics
         scrape_interval: 15s
         static_configs:
-          - targets: ["eval-fastify-min.deploy-proj-f8b83a91ebb7:80"]
+          - targets: ["eval-fastify-min.deploy-proj-94d520c594af:80"]
       - job_name: prometheus
         static_configs:
           - targets: ["localhost:9090"]
